@@ -2,7 +2,9 @@ package first;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Arrays;
 
 class UserInfo {
 	private String gender;
@@ -67,37 +69,55 @@ class FoodInfo {
 public class First {
 	public static double Base = 0.0;
 	public static int Promotion = 0;
-
+	public static ArrayList<FoodInfo> ctg_junk;
+	public static ArrayList<FoodInfo> ctg_stew;
+	public static ArrayList<FoodInfo> ctg_meat;
+	public static ArrayList<FoodInfo> ctg_drink;
+	public static ArrayList<FoodInfo> ctg_agricultural;
+	
 	public static void main(String[] args) {
 		String fileName = "foodInfo.txt";
 		Scanner inputStream = null;
 		int index = 0;
 		Scanner sc = new Scanner(System.in);
+		System.out.println("Enter Gender, Age, Height, Weight in order :");
 		UserInfo user = new UserInfo(sc.next(), sc.nextInt(), sc.nextDouble(), sc.nextDouble());
+		System.out.println("Enter number of foods : ");
 		int num_food = sc.nextInt();
+		
+		ctg_junk = new ArrayList();
+		ctg_stew = new ArrayList();
+		ctg_meat = new ArrayList();
+		ctg_drink = new ArrayList();
+		ctg_agricultural = new ArrayList();
+		
 		Base = getBase(user);
 		Promotion = getPromotion(user);
 		
 		FoodInfo[] foodList = new FoodInfo[num_food];
-		System.out.println(foodList.length);
+		
 		try {
 			inputStream = new Scanner(new File(fileName));
 		} catch (FileNotFoundException e) {
 			System.out.println("Error : opening file " + e.getMessage());
 			System.exit(0);
 		}
-		while (inputStream.hasNext()) {
+		// NAME | CALORIES | SODIUM | CHOLESTEROL
+		while (inputStream.hasNextLine()) {
 			String temp = inputStream.nextLine();
 			foodList[index] = new FoodInfo(temp.split(" ")[0], Double.parseDouble(temp.split(" ")[1]),
 					Double.parseDouble(temp.split(" ")[2]), Double.parseDouble(temp.split(" ")[3]));
 			index++;
 		}
 		for (int i = 0; i < index; i++) {
-			System.out.println(foodList[i].name + "," + foodList[i].calories + "," + foodList[i].sodium + ","
-					+ foodList[i].cholesterol);
+			if(isJunkFood(foodList[i])) {
+				ctg_junk.add(foodList[i]);
+			}
+		}
+		for(int i=0; i<ctg_junk.size(); i++) {
+			System.out.println(ctg_junk.get(i).getName());
 		}
 	}
-
 	public static double getBase(UserInfo u) {
 		double result = 0.0;
 		if (u.getGender().equals("M") || u.getGender().equals("m")) {
@@ -164,6 +184,19 @@ public class First {
 		}
 		return result;
 	}
-	
-
+	public static boolean isJunkFood(FoodInfo f) {
+		if(f.getName().indexOf("pizza") >= 0 || f.getName().indexOf("Pizza") >= 0) {
+			return true;
+		}
+		else if(f.getName().indexOf("hamburger") >=0 || f.getName().indexOf("Hamburger") >= 0) {
+			return true;
+		}
+		else if(f.getName().indexOf("chicken")>=0 || f.getName().indexOf("Chicken") >= 0) {
+			return true;
+		}
+		else if(f.getCalories() < f.getSodium() && f.getCholesterol() > 10.0) {
+			return true;
+		}
+		return false;
+	}
 }
