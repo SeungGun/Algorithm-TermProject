@@ -6,6 +6,7 @@ public class First {
 		System.out.println("Hello");
 		System.out.println("World");
 		System.out.println("ÀÌÀÌÀ×");
+		System.out.println("½Å½Â°Çº´½Å");
 	}
 
 }
