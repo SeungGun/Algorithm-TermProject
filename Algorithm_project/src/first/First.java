@@ -140,8 +140,13 @@ public class First {
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Enter Gender, Age, Height, Weight in order :");
 		UserInfo user = new UserInfo(sc.next(), sc.nextInt(), sc.nextDouble(), sc.nextDouble());
-		System.out.println("Enter number of foods : ");
-		int num_food = sc.nextInt();
+		try {
+			inputStream = new Scanner(new File(fileName));
+		} catch (FileNotFoundException e) {
+			System.out.println("Error : opening file " + e.getMessage());
+			System.exit(0);
+		}
+		int num_food = Integer.parseInt(inputStream.nextLine());
 		
 		DailyDiet monday = new DailyDiet(); 
 		DailyDiet tuesday = new DailyDiet(); 
@@ -165,12 +170,7 @@ public class First {
 		
 		FoodInfo[] foodList = new FoodInfo[num_food];
 		
-		try {
-			inputStream = new Scanner(new File(fileName));
-		} catch (FileNotFoundException e) {
-			System.out.println("Error : opening file " + e.getMessage());
-			System.exit(0);
-		}
+		
 		// NAME | CALORIES | SODIUM | CHOLESTEROL
 		while (inputStream.hasNextLine()) {
 			String temp = inputStream.nextLine();
