@@ -67,7 +67,7 @@ class FoodInfo {
 		return this.cholesterol;
 	}
 }
-class dailyDiet{
+class DailyDiet{
 	String Breakfast[]=new String[3];
 	String Lunch[]=new String[3];
 	String Dinner[]=new String[3];
@@ -125,22 +125,22 @@ public class First {
 		System.out.println("Enter number of foods : ");
 		int num_food = sc.nextInt();
 		
-		dailyDiet monday = new dailyDiet(); 
-		dailyDiet tuesday = new dailyDiet(); 
-		dailyDiet wednesday = new dailyDiet(); 
-		dailyDiet thursday = new dailyDiet(); 
-		dailyDiet friday = new dailyDiet(); 
-		dailyDiet saturday = new dailyDiet(); 
-		dailyDiet sunday = new dailyDiet(); 
+		DailyDiet monday = new DailyDiet(); 
+		DailyDiet tuesday = new DailyDiet(); 
+		DailyDiet wednesday = new DailyDiet(); 
+		DailyDiet thursday = new DailyDiet(); 
+		DailyDiet friday = new DailyDiet(); 
+		DailyDiet saturday = new DailyDiet(); 
+		DailyDiet sunday = new DailyDiet(); 
 
 		
-		ctg_junk = new ArrayList();
-		ctg_stew = new ArrayList();
-		ctg_meat = new ArrayList();
-		ctg_drink = new ArrayList();
-		ctg_agricultural = new ArrayList();
-		ctg_snack = new ArrayList();
-		ctg_other= new ArrayList();
+		ctg_junk = new ArrayList<FoodInfo>();
+		ctg_stew = new ArrayList<FoodInfo>();
+		ctg_meat = new ArrayList<FoodInfo>();
+		ctg_drink = new ArrayList<FoodInfo>();
+		ctg_agricultural = new ArrayList<FoodInfo>();
+		ctg_snack = new ArrayList<FoodInfo>();
+		ctg_other= new ArrayList<FoodInfo>();
 		
 		Base = getBase(user);
 		Promotion = getPromotion(user);
