@@ -65,6 +65,41 @@ class FoodInfo {
 		return this.cholesterol;
 	}
 }
+class dailyDiet{
+	String Breakfast[]=new String[3];
+	String Lunch[]=new String[3];
+	String Dinner[]=new String[3];
+	
+	double calorieTotal=0;
+	double sodiumTotal=0;
+	double cholesterolTotal=0;
+	
+	boolean isjunkFood=false;
+	
+	public void updateCalorie(double newCal) {
+		this.calorieTotal=this.calorieTotal+newCal;
+	}
+	public void updateSodium(double newSod) {
+		this.sodiumTotal=this.sodiumTotal+newSod;
+	}
+	public void updateCholesterol(double newCho) {
+		this.cholesterolTotal=this.cholesterolTotal+newCho;
+	}
+	
+	
+	public double getCalorieDay() {
+		return this.calorieTotal;
+	}
+	public double getSodiumDay() {
+		return this.sodiumTotal;
+	}
+	public double getCholesterolDay() {
+		return this.cholesterolTotal;
+	}
+	public boolean getIsJunkFood() {
+		return this.isjunkFood;
+	}
+}
 
 public class First {
 	public static double Base = 0.0;
@@ -84,6 +119,15 @@ public class First {
 		UserInfo user = new UserInfo(sc.next(), sc.nextInt(), sc.nextDouble(), sc.nextDouble());
 		System.out.println("Enter number of foods : ");
 		int num_food = sc.nextInt();
+		
+		dailyDiet monday = new dailyDiet(); 
+		dailyDiet tuesday = new dailyDiet(); 
+		dailyDiet wednesday = new dailyDiet(); 
+		dailyDiet thursday = new dailyDiet(); 
+		dailyDiet friday = new dailyDiet(); 
+		dailyDiet saturday = new dailyDiet(); 
+		dailyDiet sunday = new dailyDiet(); 
+
 		
 		ctg_junk = new ArrayList();
 		ctg_stew = new ArrayList();
@@ -105,6 +149,7 @@ public class First {
 		// NAME | CALORIES | SODIUM | CHOLESTEROL
 		while (inputStream.hasNextLine()) {
 			String temp = inputStream.nextLine();
+			System.out.println(temp);
 			foodList[index] = new FoodInfo(temp.split(" ")[0], Double.parseDouble(temp.split(" ")[1]),
 					Double.parseDouble(temp.split(" ")[2]), Double.parseDouble(temp.split(" ")[3]));
 			index++;
@@ -114,6 +159,7 @@ public class First {
 				ctg_junk.add(foodList[i]);
 			}
 		}
+		System.out.println("Junk Foods Are: \n");
 		for(int i=0; i<ctg_junk.size(); i++) {
 			System.out.println(ctg_junk.get(i).getName());
 		}

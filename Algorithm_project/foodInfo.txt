@@ -21,6 +21,6 @@ Rice 396.0 4.80 0.00
 Sausage 26.82 155.7 0
 ShrimpSushi 387.671 1110.293 72.645
 Soondae 542.415 1019.194 19.216
-SoyMilk  110 150 0
+SoyMilk 110 150 0
 Spaghetti 282.5 420.3 0
-Tteokbokki 173.13	484.57 0
+Tteokbokki 173.13 484.57 0
