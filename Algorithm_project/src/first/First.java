@@ -41,12 +41,14 @@ class FoodInfo {
 	double calories;
 	double sodium;
 	double cholesterol;
+	int category;
 
-	public FoodInfo(String name_, double calories_, double sodium_, double cholesterol_) {
+	public FoodInfo(String name_, double calories_, double sodium_, double cholesterol_,int category_) {
 		this.name = name_;
 		this.calories = calories_;
 		this.sodium = sodium_;
 		this.cholesterol = cholesterol_;
+		this.category=category_;
 	}
 
 	public String getName() {
@@ -104,11 +106,14 @@ class dailyDiet{
 public class First {
 	public static double Base = 0.0;
 	public static int Promotion = 0;
-	public static ArrayList<FoodInfo> ctg_junk;
-	public static ArrayList<FoodInfo> ctg_stew;
-	public static ArrayList<FoodInfo> ctg_meat;
-	public static ArrayList<FoodInfo> ctg_drink;
-	public static ArrayList<FoodInfo> ctg_agricultural;
+	public static ArrayList<FoodInfo> ctg_junk;			//0
+	public static ArrayList<FoodInfo> ctg_stew;			//1
+	public static ArrayList<FoodInfo> ctg_meat;			//2
+	public static ArrayList<FoodInfo> ctg_drink;		//3
+	public static ArrayList<FoodInfo> ctg_agricultural;	//4
+	public static ArrayList<FoodInfo> ctg_snack;		//5
+	public static ArrayList<FoodInfo> ctg_other;		//6
+
 	
 	public static void main(String[] args) {
 		String fileName = "foodInfo.txt";
@@ -134,6 +139,8 @@ public class First {
 		ctg_meat = new ArrayList();
 		ctg_drink = new ArrayList();
 		ctg_agricultural = new ArrayList();
+		ctg_snack = new ArrayList();
+		ctg_other= new ArrayList();
 		
 		Base = getBase(user);
 		Promotion = getPromotion(user);
@@ -151,7 +158,7 @@ public class First {
 			String temp = inputStream.nextLine();
 			System.out.println(temp);
 			foodList[index] = new FoodInfo(temp.split(" ")[0], Double.parseDouble(temp.split(" ")[1]),
-					Double.parseDouble(temp.split(" ")[2]), Double.parseDouble(temp.split(" ")[3]));
+					Double.parseDouble(temp.split(" ")[2]), Double.parseDouble(temp.split(" ")[3]),Integer.parseInt(temp.split(" ")[4]));
 			index++;
 		}
 		for (int i = 0; i < index; i++) {
