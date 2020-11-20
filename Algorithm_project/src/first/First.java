@@ -11,6 +11,14 @@ class UserInfo {
 	private int age;
 	private double height;
 	private double weight;
+	
+	double enoughSodium;
+	double enoughCalorie;
+	
+	double maximumSodium=3000;
+	double maximumCalorie;
+	double maxiumumCholesterol=300;
+	
 
 	public UserInfo(String gender_, int age_, double height_, double weight_) {
 		this.gender = gender_;
@@ -18,7 +26,15 @@ class UserInfo {
 		this.height = height_;
 		this.weight = weight_;
 	}
-
+	public void setEnoughSodium(double a) {
+		this.enoughSodium=a;
+	}
+	public void setEnoughCalorie(double a) {
+		this.enoughCalorie=a;
+	}
+	public void setMaximumCalorie(double a) {
+		this.maximumCalorie=a;
+	}
 	public String getGender() {
 		return this.gender;
 	}
@@ -75,6 +91,8 @@ class DailyDiet{
 	double calorieTotal=0;
 	double sodiumTotal=0;
 	double cholesterolTotal=0;
+	
+
 	
 	boolean isjunkFood=false;
 	
@@ -161,6 +179,16 @@ public class First {
 					Double.parseDouble(temp.split(" ")[2]), Double.parseDouble(temp.split(" ")[3]),Integer.parseInt(temp.split(" ")[4]));
 			index++;
 		}
+		user.enoughSodium=getSodiumBase(user);
+		user.enoughCalorie=getBase(user);
+		user.maximumCalorie=getPromotion(user);
+		System.out.println("\n");
+		System.out.println("You should eat " + user.enoughCalorie +" between "+user.maximumCalorie+" calorie");
+		System.out.println("\n");
+		System.out.println("You should eat " + user.enoughSodium +" between "+user.maximumSodium+" sodium");
+		System.out.println("\n");
+		System.out.println("You should eat cholesterol below " + user.maxiumumCholesterol);
+		
 		for (int i = 0; i < index; i++) {
 			foodSort(foodList[i]);
 		}
@@ -264,6 +292,32 @@ public class First {
 				result = 2000;
 			} 
 		}
+		return result;
+	}
+	public static int getSodiumBase(UserInfo u) {
+		int result = 0;
+		int a = u.getAge();
+	
+			if(a<=2) {
+				result= 900;
+			}else if (a<=5) {
+				result=1000;
+			}
+			else if (a<=8) {
+				result=1200;
+			}
+			else if (a<=11) {
+				result=1400;
+			}
+			else if(a<=64) {
+				result=1500;
+			}
+			else if(a<=74) {
+				result=1300;
+			}else {
+				result=1100;
+			}
+	
 		return result;
 	}
 	public static void foodSort(FoodInfo f) {
