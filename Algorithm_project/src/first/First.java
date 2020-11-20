@@ -162,13 +162,42 @@ public class First {
 			index++;
 		}
 		for (int i = 0; i < index; i++) {
-			if(isJunkFood(foodList[i])) {
-				ctg_junk.add(foodList[i]);
-			}
+			foodSort(foodList[i]);
 		}
-		System.out.println("Junk Foods Are: \n");
+		System.out.println("\n");
+		System.out.println("Junk Foods Are: ");
 		for(int i=0; i<ctg_junk.size(); i++) {
 			System.out.println(ctg_junk.get(i).getName());
+		}
+		System.out.println("\n");
+		System.out.println("Stews Are: ");
+		for(int i=0; i<ctg_stew.size(); i++) {
+			System.out.println(ctg_stew.get(i).getName());
+		}
+		System.out.println("\n");
+		System.out.println("Meats Are: ");
+		for(int i=0; i<ctg_meat.size(); i++) {
+			System.out.println(ctg_meat.get(i).getName());
+		}
+		System.out.println("\n");
+		System.out.println("Drinks Are: ");
+		for(int i=0; i<ctg_drink.size(); i++) {
+			System.out.println(ctg_drink.get(i).getName());
+		}
+		System.out.println("\n");
+		System.out.println("Agricultural Are: ");
+		for(int i=0; i<ctg_agricultural.size(); i++) {
+			System.out.println(ctg_agricultural.get(i).getName());
+		}
+		System.out.println("\n");
+		System.out.println("Snacks Are: ");
+		for(int i=0; i<ctg_snack.size(); i++) {
+			System.out.println(ctg_snack.get(i).getName());
+		}
+		System.out.println("\n");
+		System.out.println("Others Are: ");
+		for(int i=0; i<ctg_other.size(); i++) {
+			System.out.println(ctg_other.get(i).getName());
 		}
 	}
 	public static double getBase(UserInfo u) {
@@ -237,19 +266,43 @@ public class First {
 		}
 		return result;
 	}
-	public static boolean isJunkFood(FoodInfo f) {
-		if(f.getName().indexOf("pizza") >= 0 || f.getName().indexOf("Pizza") >= 0) {
-			return true;
+	public static void foodSort(FoodInfo f) {
+		switch(f.category) {
+		case 0:
+			ctg_junk.add(f);
+			break;
+		case 1:
+			ctg_stew.add(f);
+			break;
+		case 2:
+			ctg_meat.add(f);
+			break;
+		case 3:
+			ctg_drink.add(f);
+			break;
+		case 4:
+			ctg_agricultural.add(f);
+			break;
+		case 5:
+			ctg_snack.add(f);
+			break;
+		default:
+			ctg_other.add(f);
 		}
-		else if(f.getName().indexOf("hamburger") >=0 || f.getName().indexOf("Hamburger") >= 0) {
-			return true;
-		}
-		else if(f.getName().indexOf("chicken")>=0 || f.getName().indexOf("Chicken") >= 0) {
-			return true;
-		}
-		else if(f.getCalories() < f.getSodium() && f.getCholesterol() > 10.0) {
-			return true;
-		}
-		return false;
 	}
+	//public static boolean isJunkFood(FoodInfo f) {
+	//	if(f.getName().indexOf("pizza") >= 0 || f.getName().indexOf("Pizza") >= 0) {
+	//		return true;
+	//	}
+	//	else if(f.getName().indexOf("hamburger") >=0 || f.getName().indexOf("Hamburger") >= 0) {
+	//		return true;
+	//	}
+	//	else if(f.getName().indexOf("chicken")>=0 || f.getName().indexOf("Chicken") >= 0) {
+	//		return true;
+	//	}
+	//	else if(f.getCalories() < f.getSodium() && f.getCholesterol() > 10.0) {
+	//		return true;
+	//	}
+	//	return false;
+	//}
 }
