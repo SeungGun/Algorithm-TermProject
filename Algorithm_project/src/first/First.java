@@ -85,15 +85,20 @@ class FoodInfo {
 	}
 }
 class DailyDiet{
-	String Breakfast[]=new String[3];
-	String Lunch[]=new String[3];
-	String Dinner[]=new String[3];
-	
+	public static ArrayList<FoodInfo> breakfast;
+	public static ArrayList<FoodInfo> lunch;
+	public static ArrayList<FoodInfo> dinner;
 	double calorieTotal=0;
 	double sodiumTotal=0;
 	double cholesterolTotal=0;
 	
+	public void setArrayList() {
+		this.breakfast= new ArrayList<FoodInfo>();
 
+		this.lunch= new ArrayList<FoodInfo>();
+
+		this.dinner= new ArrayList<FoodInfo>();
+	}
 	
 	boolean isjunkFood=false;
 	
@@ -134,6 +139,7 @@ public class First {
 	public static ArrayList<FoodInfo> ctg_snack;		//5
 	public static ArrayList<FoodInfo> ctg_other;		//6
 	public static double[][] dp;
+	public static double[][] backTrack;
 	public static FoodInfo[] foodList;
 	public static HashSet<Integer> index_set;
 	public static double sum = 0.0;
@@ -161,6 +167,15 @@ public class First {
 		DailyDiet saturday = new DailyDiet(); 
 		DailyDiet sunday = new DailyDiet(); 
 	
+		monday.setArrayList();
+		tuesday.setArrayList();
+		wednesday.setArrayList();
+		thursday.setArrayList();
+		friday.setArrayList();
+		saturday.setArrayList();
+		sunday.setArrayList();
+		
+		
 		index_set = new HashSet<Integer>(num_food);
 		
 		ctg_junk = new ArrayList<FoodInfo>();
@@ -171,11 +186,14 @@ public class First {
 		ctg_snack = new ArrayList<FoodInfo>();
 		ctg_other= new ArrayList<FoodInfo>();
 		
+		
+		
 		Base = getBase(user);
 		Promotion = getPromotion(user);
 		
 		foodList = new FoodInfo[num_food];
 		dp = new double[num_food+1][3001];
+		backTrack = new double[num_food+1][3001];
 		
 		for(int i =0; i<num_food+1; i++) {
 			for(int j =0; j<3001; j++) {
@@ -242,16 +260,18 @@ public class First {
 		for(int i=0; i<ctg_other.size(); i++) {
 			System.out.println(ctg_other.get(i).getName());
 		}
-		
-		System.out.println(knapsack(0,3000));
+		System.out.println("\n");
+		System.out.println(knapsack(0,3000,monday.breakfast));
 		
 		
 		Iterator<Integer> iter = index_set.iterator();
+		
 		while(iter.hasNext()) {
 			System.out.println(iter.next());
 		}
 		System.out.println("remain sodium : "+remain_sodium);
-	}
+		
+		}
 	public static double getBase(UserInfo u) {
 		double result = 0.0;
 		if (u.getGender().equals("M") || u.getGender().equals("m")) {
@@ -262,7 +282,9 @@ public class First {
 		return result;
 	}
 	
-	public static double knapsack(int num, int capacity) {
+	static double a=0;
+	
+	public static double knapsack(int num, int capacity,ArrayList meal) {
 		if(num == num_food) {
 			return 0;
 		}
@@ -270,10 +292,11 @@ public class First {
 		if(temp != -1) return temp;
 		
 		if(foodList[num].getSodium() <= capacity) {
-			double tmp = knapsack(num+1, (int)(capacity - foodList[num].getSodium()));
+			double tmp = knapsack(num+1, (int)(capacity - foodList[num].getSodium()),meal);
 			temp = foodList[num].getCalories() + tmp;
 			if(temp > Promotion) {
 				temp = foodList[num].getCalories();
+				
 			}
 			else {
 				remain_sodium = (int)(capacity - foodList[num].getSodium());
@@ -281,11 +304,16 @@ public class First {
 			index_set.add(num);
 		}
 		
-		double tmp2 = knapsack(num+1,capacity);
+		double tmp2 = knapsack(num+1,capacity,meal);
 		if(tmp2 > temp && tmp2 != 0 && temp !=0) {
+			
 			temp = tmp2; 
 		}
 		dp[num][capacity] = temp;
+		if(temp>a) {
+			meal.add(foodList[num]);
+			a=temp;
+		}
 		return temp;
 	}
 	public static void backtrackingDP(int num, int capacity) {
