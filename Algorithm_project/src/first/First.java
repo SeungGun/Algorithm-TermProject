@@ -3,8 +3,9 @@ package first;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Scanner;
-import java.util.Arrays;
 
 class UserInfo {
 	private String gender;
@@ -124,6 +125,7 @@ class DailyDiet{
 public class First {
 	public static double Base = 0.0;
 	public static int Promotion = 0;
+	public static int num_food;
 	public static ArrayList<FoodInfo> ctg_junk;			//0
 	public static ArrayList<FoodInfo> ctg_stew;			//1
 	public static ArrayList<FoodInfo> ctg_meat;			//2
@@ -131,14 +133,17 @@ public class First {
 	public static ArrayList<FoodInfo> ctg_agricultural;	//4
 	public static ArrayList<FoodInfo> ctg_snack;		//5
 	public static ArrayList<FoodInfo> ctg_other;		//6
-
-	
+	public static double[][] dp;
+	public static FoodInfo[] foodList;
+	public static HashSet<Integer> index_set;
+	public static double sum = 0.0;
+	public static double remain_sodium = 0.0;
 	public static void main(String[] args) {
 		String fileName = "foodInfo.txt";
 		Scanner inputStream = null;
 		int index = 0;
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter Gender, Age, Height, Weight in order :");
+		System.out.println("Enter Gender, Age, Height(m), Weight(kg) in order :");
 		UserInfo user = new UserInfo(sc.next(), sc.nextInt(), sc.nextDouble(), sc.nextDouble());
 		try {
 			inputStream = new Scanner(new File(fileName));
@@ -146,8 +151,8 @@ public class First {
 			System.out.println("Error : opening file " + e.getMessage());
 			System.exit(0);
 		}
-		int num_food = Integer.parseInt(inputStream.nextLine());
-		
+		num_food = Integer.parseInt(inputStream.nextLine());
+		System.out.println("food# :"+num_food);
 		DailyDiet monday = new DailyDiet(); 
 		DailyDiet tuesday = new DailyDiet(); 
 		DailyDiet wednesday = new DailyDiet(); 
@@ -155,7 +160,8 @@ public class First {
 		DailyDiet friday = new DailyDiet(); 
 		DailyDiet saturday = new DailyDiet(); 
 		DailyDiet sunday = new DailyDiet(); 
-
+	
+		index_set = new HashSet<Integer>(num_food);
 		
 		ctg_junk = new ArrayList<FoodInfo>();
 		ctg_stew = new ArrayList<FoodInfo>();
@@ -168,9 +174,14 @@ public class First {
 		Base = getBase(user);
 		Promotion = getPromotion(user);
 		
-		FoodInfo[] foodList = new FoodInfo[num_food];
+		foodList = new FoodInfo[num_food];
+		dp = new double[num_food+1][3001];
 		
-		
+		for(int i =0; i<num_food+1; i++) {
+			for(int j =0; j<3001; j++) {
+				dp[i][j] = -1;
+			}
+		}
 		// NAME | CALORIES | SODIUM | CHOLESTEROL
 		while (inputStream.hasNextLine()) {
 			String temp = inputStream.nextLine();
@@ -189,6 +200,10 @@ public class First {
 		System.out.println("\n");
 		System.out.println("You should eat cholesterol below " + user.maxiumumCholesterol);
 		
+		for(int i =0; i<foodList.length; i++) {
+			sum += foodList[i].getCalories();
+		}
+		System.out.println(sum);
 		for (int i = 0; i < index; i++) {
 			foodSort(foodList[i]);
 		}
@@ -227,6 +242,15 @@ public class First {
 		for(int i=0; i<ctg_other.size(); i++) {
 			System.out.println(ctg_other.get(i).getName());
 		}
+		
+		System.out.println(knapsack(0,3000));
+		
+		
+		Iterator<Integer> iter = index_set.iterator();
+		while(iter.hasNext()) {
+			System.out.println(iter.next());
+		}
+		System.out.println("remain sodium : "+remain_sodium);
 	}
 	public static double getBase(UserInfo u) {
 		double result = 0.0;
@@ -237,7 +261,36 @@ public class First {
 		}
 		return result;
 	}
-
+	
+	public static double knapsack(int num, int capacity) {
+		if(num == num_food) {
+			return 0;
+		}
+		double temp = dp[num][capacity];
+		if(temp != -1) return temp;
+		
+		if(foodList[num].getSodium() <= capacity) {
+			double tmp = knapsack(num+1, (int)(capacity - foodList[num].getSodium()));
+			temp = foodList[num].getCalories() + tmp;
+			if(temp > Promotion) {
+				temp = foodList[num].getCalories();
+			}
+			else {
+				remain_sodium = (int)(capacity - foodList[num].getSodium());
+			}
+			index_set.add(num);
+		}
+		
+		double tmp2 = knapsack(num+1,capacity);
+		if(tmp2 > temp && tmp2 != 0 && temp !=0) {
+			temp = tmp2; 
+		}
+		dp[num][capacity] = temp;
+		return temp;
+	}
+	public static void backtrackingDP(int num, int capacity) {
+		
+	}
 	public static int getPromotion(UserInfo u) {
 		int result = 0;
 		int a = u.getAge();
