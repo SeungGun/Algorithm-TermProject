@@ -3,9 +3,6 @@ package first;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Scanner;
 
 class UserInfo {
@@ -91,6 +88,18 @@ class FoodInfo {
 	public int getCategory() {
 		return this.category;
 	}
+	public String getCategoryInString() {
+		switch(this.category) {
+		case 0: return "Junk";
+		case 1: return "Stew"; 
+		case 2: return "Meat";
+		case 3: return "Drink";
+		case 4: return "Agricultural";
+		case 5: return "Snack";
+		case 6: return "Other";
+		default : return "MATCH ERROR";
+		}
+	}
 }
 
 class DailyDiet {
@@ -146,18 +155,14 @@ public class First {
 	public static ArrayList<FoodInfo> ctg_other; // 6
 	public static double[][] dp;
 	public static FoodInfo[] foodList;
-	public static HashSet<Integer> index_set;
-	public static HashSet<Double> values;
 	public static double sum = 0.0;
-	public static double remain_sodium = 0.0;
-	public static int tmp_index1 = 0;
-	public static int tmp_index2 = 0;
 	public static final int prefer_sodium = 3000;
 	public static ArrayList<Integer> backtracked;
 	public static boolean isThereJunk = false;
-	public static boolean[] isContaining; 
+	public static boolean isFirst = false;
 	
 	public static void main(String[] args) {
+		//Process : initDP() -> foodSort() ->  knapsack() ->  backtrackingDP() -> findThreshold()
 		String fileName = "foodInfo.txt";
 		Scanner inputStream = null;
 		int index = 0;
@@ -175,9 +180,6 @@ public class First {
 
 		backtracked = new ArrayList<Integer>();
 
-		isContaining = new boolean[prefer_sodium+1];
-		Arrays.fill(isContaining, false);
-		
 		DailyDiet monday = new DailyDiet();
 		DailyDiet tuesday = new DailyDiet();
 		DailyDiet wednesday = new DailyDiet();
@@ -186,10 +188,6 @@ public class First {
 		DailyDiet saturday = new DailyDiet();
 		DailyDiet sunday = new DailyDiet();
 
-		
-		index_set = new HashSet<Integer>(num_food);
-		values = new HashSet<Double>(num_food);
-		
 		ctg_junk = new ArrayList<FoodInfo>();
 		ctg_stew = new ArrayList<FoodInfo>();
 		ctg_meat = new ArrayList<FoodInfo>();
@@ -201,13 +199,9 @@ public class First {
 		Base = getBase(user);
 		Promotion = getPromotion(user);
 		foodList = new FoodInfo[num_food];
-		dp = new double[num_food + 1][3001];
+		dp = new double[num_food + 1][prefer_sodium+1];
 
-		for (int i = 0; i < num_food + 1; i++) {
-			for (int j = 0; j < 3001; j++) {
-				dp[i][j] = -1;
-			}
-		}
+		initDP();
 		// NAME | CALORIES | SODIUM | CHOLESTEROL | CATEGORY
 		while (inputStream.hasNextLine()) {
 			String temp = inputStream.nextLine();
@@ -220,6 +214,7 @@ public class First {
 		user.enoughSodium = getSodiumBase(user);
 		user.enoughCalorie = getBase(user);
 		user.maximumCalorie = getPromotion(user);
+		
 		System.out.println("\n");
 		System.out.println("You should eat " + user.enoughCalorie + " between " + user.maximumCalorie + " calorie");
 		System.out.println("\n");
@@ -269,22 +264,21 @@ public class First {
 		for (int i = 0; i < ctg_other.size(); i++) {
 			System.out.println(ctg_other.get(i).getName());
 		}
-		knapsack(0, 3000);
+		
+		knapsack(0, prefer_sodium);
 
 		backtrackingDP(Promotion);
+		
 		double s = 0;
 		for (int i = 0; i < backtracked.size(); i++) {
 			s += foodList[backtracked.get(i)].getCalories();
-			//System.out.println("Name : " + foodList[backtracked.get(i)].getName() + " : "
-			//			+ foodList[backtracked.get(i)].getCalories());
-			//System.out.println("s!! : " + s+" IDX : "+backtracked.get(i));
 		}
 		System.out.println("\nbacktracked sum : " + s);
+		
 		findThreshold(backtracked, s);
-
 		System.out.println("\nSelected Food list :");
 		for(int i = 0; i< backtracked.size(); i++) {
-			System.out.println((i+1)+" : "+foodList[backtracked.get(i)].getName());
+			System.out.println((i+1)+" : "+foodList[backtracked.get(i)].getName()+", category : "+foodList[backtracked.get(i)].getCategoryInString());
 		}
 	}
 
@@ -336,22 +330,26 @@ public class First {
 			
 			if (foodList[num].getCategory() == 0 && !isThereJunk) {
 				isThereJunk = true;
-				System.out.println("\nleading to junk is : " + foodList[num].getName());
+				isFirst = true;
+				temp = tmp + foodList[num].getCalories();
+				dp[num][(int)capacity] = temp;
+				return temp;
 			}
-			if (isThereJunk) {
+			if (isThereJunk && !isFirst) {
 				if (foodList[num].getCategory() == 0)
 					temp = tmp;
 				else {
 					temp = foodList[num].getCalories() + tmp;
-					values.add(temp);
 				}
-			} else {
+				
+			} 
+			else if(!isFirst){
 				temp = foodList[num].getCalories() + tmp;
 			}
 			if (temp > Promotion) {
-				temp = tmp;
-			} 
-
+				temp = tmp;		
+			}
+			isFirst = false;
 		}
 
 		double tmp2 = knapsack(num + 1, capacity);
@@ -474,6 +472,13 @@ public class First {
 			break;
 		default:
 			ctg_other.add(f);
+		}
+	}
+	public static void initDP() {
+		for (int i = 0; i < num_food + 1; i++) {
+			for (int j = 0; j < prefer_sodium+1; j++) {
+				dp[i][j] = -1;
+			}
 		}
 	}
 	// public static boolean isJunkFood(FoodInfo f) {
