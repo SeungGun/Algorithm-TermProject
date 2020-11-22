@@ -230,7 +230,7 @@ public class First {
 		for (int i = 0; i < foodList.length; i++) {
 			sum += foodList[i].getCalories();
 		}
-		System.out.println(sum);
+		System.out.println("\nTotal sum of Input Foods : "+sum);
 		for (int i = 0; i < index; i++) {
 			foodSort(foodList[i]);
 		}
@@ -269,43 +269,22 @@ public class First {
 		for (int i = 0; i < ctg_other.size(); i++) {
 			System.out.println(ctg_other.get(i).getName());
 		}
+		knapsack(0, 3000);
 
-		System.out.println("Total Calories : " + knapsack(0, 3000) + " dp value : " + dp[tmp_index1][tmp_index2]
-				+ " Id1 , Id2 : " + tmp_index1 + " " + tmp_index2);
-
-		Iterator<Integer> iter = index_set.iterator();
-		double ss = 0;
-		while (iter.hasNext()) {
-			ss += foodList[iter.next()].getCalories();
-
-			// System.out.println(" DWDWWDWD : "+iter.next());
-		}
-		System.out.println("iterator sum : " + ss);
-		System.out.println("remain sodium : " + remain_sodium);
-
-		for (int i = 0; i < num_food + 1; i++) {
-			for (int j = 0; j < prefer_sodium + 1; j++) {
-				if (dp[i][j] != -1)
-					System.out.print((int) dp[i][j] + " ");
-			}
-			System.out.println();
-		}
 		backtrackingDP(Promotion);
 		double s = 0;
 		for (int i = 0; i < backtracked.size(); i++) {
 			s += foodList[backtracked.get(i)].getCalories();
-			/*
-			 * if(s > Promotion) { s-= foodList[backtracked.get(i)].getCalories(); break; }
-			 */System.out.println("Name : " + foodList[backtracked.get(i)].getName() + " : "
-						+ foodList[backtracked.get(i)].getCalories());
-			System.out.println("s!! : " + s);
-			
+			//System.out.println("Name : " + foodList[backtracked.get(i)].getName() + " : "
+			//			+ foodList[backtracked.get(i)].getCalories());
+			//System.out.println("s!! : " + s+" IDX : "+backtracked.get(i));
 		}
-		System.out.println("backtracked sum : " + s);
-		findThreshold(index_set, s);
-		Iterator<Double> itt = values.iterator();
-		while(itt.hasNext()) {
-			System.out.println("values : "+itt.next());
+		System.out.println("\nbacktracked sum : " + s);
+		findThreshold(backtracked, s);
+
+		System.out.println("\nSelected Food list :");
+		for(int i = 0; i< backtracked.size(); i++) {
+			System.out.println((i+1)+" : "+foodList[backtracked.get(i)].getName());
 		}
 	}
 
@@ -319,27 +298,29 @@ public class First {
 		return result;
 	}
 
-	public static void findThreshold(HashSet<Integer> set, double sum) {
+	public static void findThreshold(ArrayList<Integer> set, double sum) {
 		if(sum <= Promotion) return;
-		Iterator<Integer> it = set.iterator();
 		double max = -1;
 		int idx = -1;
 		double k = 0;
-		while (it.hasNext()) {
-			int to = it.next();
+		int number = -1;
+		for(int i =0; i<set.size(); i++) {
+			int to = set.get(i);
 			k = foodList[to].getCalories();
 			if (max < sum - k && sum - k <= Promotion) {
 				max = sum - k;
-				idx = to;
+				idx = i;
+				number = to;
 			}
 		}
-		if(idx != -1)
+		if(idx != -1 && number != -1) {
 			set.remove(idx);
-		System.out.println("max : " + max + ", And extract : " + foodList[idx].getCalories() + " then index : " + idx);	
+			System.out.println("Total Max : " + max + ", And extracted : " + foodList[number].getCalories() 
+					+"("+foodList[number].getName()+ "),  its index : " + number);
+		}
 		if(max > Promotion) {
 			findThreshold(set, max);
 		}
-
 	}
 
 	public static double knapsack(int num, double capacity) {
@@ -355,7 +336,7 @@ public class First {
 			
 			if (foodList[num].getCategory() == 0 && !isThereJunk) {
 				isThereJunk = true;
-				System.out.println("leading to junk is : " + foodList[num].getName());
+				System.out.println("\nleading to junk is : " + foodList[num].getName());
 			}
 			if (isThereJunk) {
 				if (foodList[num].getCategory() == 0)
@@ -366,16 +347,10 @@ public class First {
 				}
 			} else {
 				temp = foodList[num].getCalories() + tmp;
-				values.add(temp);
 			}
 			if (temp > Promotion) {
 				temp = tmp;
-				tmp_index1 = num;
-				tmp_index2 = (int) capacity;
-
-			} else {
-				remain_sodium = (int) (capacity - foodList[num].getSodium());
-			}
+			} 
 
 		}
 
@@ -395,8 +370,6 @@ public class First {
 					continue;
 				if (t < dp[i][j]) {
 					t = dp[i][j];
-					System.out.println("t : " + t + ",, " + foodList[i].getCalories() + " i = , " + i + " j = , " + j
-							+ " Cal : " + foodList[i].getCalories() + " ," + foodList[i].getName());
 					backtracked.add(i);
 				}
 			}
