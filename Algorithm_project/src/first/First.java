@@ -182,6 +182,7 @@ public class First {
 	public static boolean isThereJunk = false;
 	public static boolean isFirst = false;
 	public static boolean[] isSelected;
+	public static DailyDiet[] weeks = new DailyDiet[7];
 
 
 	public static void main(String[] args) {
@@ -204,8 +205,8 @@ public class First {
 
 		backtracked = new ArrayList<Integer>();
 
-		DailyDiet[] weeks = new DailyDiet[7];
-		Arrays.fill(weeks, new DailyDiet());
+		weeks = new DailyDiet[7];
+		for(int i =0; i<weeks.length; i++) weeks[i] = new DailyDiet();
 
 		ctg_junk = new ArrayList<FoodInfo>();
 		ctg_stew = new ArrayList<FoodInfo>();
@@ -300,7 +301,7 @@ public class First {
 
 			backtrackingDP(Promotion);
 
-			List<Integer> result = backtracked.stream().distinct().collect(Collectors.toList());
+			List<Integer> result = backtracked.stream().distinct().collect(Collectors.toList()); // remove duplicate 
 			ArrayList<Integer> tmp_list = new ArrayList<Integer>();
 			for(int i=0; i<result.size(); i++) {
 				tmp_list.add(result.get(i));
@@ -314,7 +315,7 @@ public class First {
 			}
 			System.out.println("\nbacktracked sum : " + s);
 
-			findThreshold(backtracked, s);
+			adjustCalories(backtracked, s);
 			
 			MatchRice(backtracked);
 			s = 0;
@@ -331,7 +332,8 @@ public class First {
 						+ ", category : " + foodList[backtracked.get(i)].getCategoryInString());
 
 			}
-
+			createCombinationDaily(backtracked,week);
+			
 			backtracked.clear();
 		}
 	}
@@ -345,13 +347,58 @@ public class First {
 		}
 		return result;
 	}
-	public static void createCombinationDaily(ArrayList<Integer> set, DailyDiet day) {
+	public static void createCombinationDaily(ArrayList<Integer> set, int week) {
 		if(set.size() == 3) {
+			boolean[] keys = new boolean[] {false,false,false};
+			
 			for(int i=0; i<set.size(); i++) {
-				if(foodList[set.get(i)].getCategory() == 7 || foodList[set.get(i)].getCategory() == 2) {
-					day.Breakfast.add(foodList[set.get(i)].getName());
+				if(!keys[0] && foodList[set.get(i)].getCategory() == 7 || foodList[set.get(i)].getCategory() == 1 || foodList[set.get(i)].getCategory() == 4) {
+					weeks[week].Breakfast.add(foodList[set.get(i)].getName());
+					keys[0] = true;
+				}
+				else if(!keys[1]&&foodList[set.get(i)].getCategory() == 7 ||  foodList[set.get(i)].getCategory() == 5) {
+					weeks[week].Lunch.add(foodList[set.get(i)].getName());
+					keys[1] = true;
+				}
+				else if(!keys[2]&&foodList[set.get(i)].getCategory() == 2 || foodList[set.get(i)].getCategory() == 6) {
+					weeks[week].Dinner.add(foodList[set.get(i)].getName());
+					keys[2] = true;
+				}
+				else{
+					if(keys[0] && keys[1]) weeks[week].Dinner.add(foodList[set.get(i)].getName());
+					else if(keys[1] && keys[2]) weeks[week].Breakfast.add(foodList[set.get(i)].getName());
+					else if(keys[0] && keys[2]) weeks[week].Lunch.add(foodList[set.get(i)].getName());
+					else weeks[week].Lunch.add(foodList[set.get(i)].getName());
+				}
+				
+			}
+			System.out.println(weeks[week].Breakfast.get(0));
+			System.out.println(weeks[week].Lunch.get(0));
+			System.out.println(weeks[week].Dinner.get(0));
+		}
+		else {
+			for(int i =0; i<set.size(); i++) {
+				if(i % 3 == 0) {
+					weeks[week].Breakfast.add(foodList[set.get(i)].getName());
+
+				}
+				else if(i % 3 == 1) {
+					weeks[week].Lunch.add(foodList[set.get(i)].getName());
+
+				}
+				else if(i % 3 == 2) {
+					weeks[week].Dinner.add(foodList[set.get(i)].getName());
 				}
 			}
+			for(int i=0; i<weeks[week].Breakfast.size(); i++) System.out.println(weeks[week].Breakfast.get(i));
+			System.out.println();
+			for(int i=0; i<weeks[week].Lunch.size(); i++) System.out.println(weeks[week].Lunch.get(i));
+			System.out.println();
+
+			for(int i=0; i<weeks[week].Dinner.size(); i++) System.out.println(weeks[week].Dinner.get(i));
+			System.out.println();
+
+
 		}
 	}
 	public static void MatchRice(ArrayList<Integer> set) {
@@ -366,7 +413,7 @@ public class First {
 			}
 		}
 	}
-	public static void findThreshold(ArrayList<Integer> set, double sum) {
+	public static void adjustCalories(ArrayList<Integer> set, double sum) {
 		double max = -1;
 		int idx = -1;
 		double k = 0;
@@ -388,7 +435,7 @@ public class First {
 				set.add(idx);
 				isSelected[idx] = true;
 				if (sum + max <= Base)
-					findThreshold(set, sum + k); // despite adding a max value, if it is less than Base calories, recursively executes.
+					adjustCalories(set, sum + k); // despite adding a max value, if it is less than Base calories, recursively executes.
 				else
 					return;
 				
@@ -422,7 +469,7 @@ public class First {
 					+ foodList[number].getName() + "),  its index : " + number);
 		}
 		if (max > Promotion) {
-			findThreshold(set, max);
+			adjustCalories(set, max);
 		}
 	}
 
