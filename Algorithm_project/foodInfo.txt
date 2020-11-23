@@ -27,7 +27,7 @@ Spaghetti 282.5 420.3 0 7
 Tteokbokki 173.13 484.57 0 5
 Peach 100 130.3 25.9 4
 KimchiNoodle 250.177 1437.301 23 1
-SeolleongRang 281 957.7 8.9 1
+SeolleongTang 281 957.7 8.9 1
 GalbiTang 665 1120 15 1
 GamjaTang 300 820 165 1
 DakBokkeumTang 95 170 10 1

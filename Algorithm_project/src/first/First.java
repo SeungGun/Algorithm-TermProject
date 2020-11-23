@@ -116,6 +116,7 @@ class FoodInfo {
 			return "MATCH ERROR";
 		}
 	}
+
 	public int getIndexNum() {
 		return this.index_num;
 	}
@@ -184,7 +185,6 @@ public class First {
 	public static boolean[] isSelected;
 	public static DailyDiet[] weeks = new DailyDiet[7];
 
-
 	public static void main(String[] args) {
 		// Process : initDP() -> foodSort() -> knapsack() -> backtrackingDP() ->
 		// findThreshold() -> reSettingList() ==> 7 execution for a week
@@ -206,7 +206,8 @@ public class First {
 		backtracked = new ArrayList<Integer>();
 
 		weeks = new DailyDiet[7];
-		for(int i =0; i<weeks.length; i++) weeks[i] = new DailyDiet();
+		for (int i = 0; i < weeks.length; i++)
+			weeks[i] = new DailyDiet();
 
 		ctg_junk = new ArrayList<FoodInfo>();
 		ctg_stew = new ArrayList<FoodInfo>();
@@ -218,8 +219,7 @@ public class First {
 		ctg_other = new ArrayList<FoodInfo>();
 
 		isSelected = new boolean[num_food];
-		
-		
+
 		Base = getBase(user);
 		Promotion = getPromotion(user);
 		foodList = new FoodInfo[num_food];
@@ -230,7 +230,7 @@ public class First {
 			System.out.println(index + " " + temp);
 			foodList[index] = new FoodInfo(temp.split(" ")[0], Double.parseDouble(temp.split(" ")[1]),
 					Double.parseDouble(temp.split(" ")[2]), Double.parseDouble(temp.split(" ")[3]),
-					Integer.parseInt(temp.split(" ")[4]),index);
+					Integer.parseInt(temp.split(" ")[4]), index);
 			index++;
 		}
 
@@ -301,22 +301,22 @@ public class First {
 
 			backtrackingDP(Promotion);
 
-			List<Integer> result = backtracked.stream().distinct().collect(Collectors.toList()); // remove duplicate 
+			List<Integer> result = backtracked.stream().distinct().collect(Collectors.toList()); // remove duplicate
 			ArrayList<Integer> tmp_list = new ArrayList<Integer>();
-			for(int i=0; i<result.size(); i++) {
+			for (int i = 0; i < result.size(); i++) {
 				tmp_list.add(result.get(i));
 			}
 			backtracked = tmp_list;
 			double s = 0;
 			for (int i = 0; i < backtracked.size(); i++) {
 				isSelected[backtracked.get(i)] = true;
-				//System.out.println("Backtrack : "+foodList[backtracked.get(i)].getName());
+				// System.out.println("Backtrack : "+foodList[backtracked.get(i)].getName());
 				s += foodList[backtracked.get(i)].getCalories();
 			}
 			System.out.println("\nbacktracked sum : " + s);
 
 			adjustCalories(backtracked, s);
-			
+
 			MatchRice(backtracked);
 			s = 0;
 			for (int i = 0; i < backtracked.size(); i++) {
@@ -332,8 +332,8 @@ public class First {
 						+ ", category : " + foodList[backtracked.get(i)].getCategoryInString());
 
 			}
-			createCombinationDaily(backtracked,week);
-			
+			createCombinationDaily(backtracked, week);
+
 			backtracked.clear();
 		}
 	}
@@ -347,65 +347,92 @@ public class First {
 		}
 		return result;
 	}
+
 	public static void createCombinationDaily(ArrayList<Integer> set, int week) {
-		if(set.size() == 3) {
-			boolean[] keys = new boolean[] {false,false,false};
-			
-			for(int i=0; i<set.size(); i++) {
-				if(!keys[0] && foodList[set.get(i)].getCategory() == 7 || foodList[set.get(i)].getCategory() == 1 || foodList[set.get(i)].getCategory() == 4) {
+		if (set.size() == 3) {
+			boolean[] keys = new boolean[] { false, false, false };
+
+			for (int i = 0; i < set.size(); i++) {
+				if (!keys[0] && foodList[set.get(i)].getCategory() == 7 || foodList[set.get(i)].getCategory() == 1
+						|| foodList[set.get(i)].getCategory() == 4) {
 					weeks[week].Breakfast.add(foodList[set.get(i)].getName());
 					keys[0] = true;
-				}
-				else if(!keys[1]&&foodList[set.get(i)].getCategory() == 7 ||  foodList[set.get(i)].getCategory() == 5) {
+				} else if (!keys[1] && foodList[set.get(i)].getCategory() == 7
+						|| foodList[set.get(i)].getCategory() == 5) {
 					weeks[week].Lunch.add(foodList[set.get(i)].getName());
 					keys[1] = true;
-				}
-				else if(!keys[2]&&foodList[set.get(i)].getCategory() == 2 || foodList[set.get(i)].getCategory() == 6) {
+				} else if (!keys[2] && foodList[set.get(i)].getCategory() == 2
+						|| foodList[set.get(i)].getCategory() == 6) {
 					weeks[week].Dinner.add(foodList[set.get(i)].getName());
 					keys[2] = true;
+				} else {
+					if (keys[0] && keys[1])
+						weeks[week].Dinner.add(foodList[set.get(i)].getName());
+					else if (keys[1] && keys[2])
+						weeks[week].Breakfast.add(foodList[set.get(i)].getName());
+					else if (keys[0] && keys[2])
+						weeks[week].Lunch.add(foodList[set.get(i)].getName());
+					else
+						weeks[week].Lunch.add(foodList[set.get(i)].getName());
 				}
-				else{
-					if(keys[0] && keys[1]) weeks[week].Dinner.add(foodList[set.get(i)].getName());
-					else if(keys[1] && keys[2]) weeks[week].Breakfast.add(foodList[set.get(i)].getName());
-					else if(keys[0] && keys[2]) weeks[week].Lunch.add(foodList[set.get(i)].getName());
-					else weeks[week].Lunch.add(foodList[set.get(i)].getName());
-				}
-				
+
 			}
 			System.out.println(weeks[week].Breakfast.get(0));
 			System.out.println(weeks[week].Lunch.get(0));
 			System.out.println(weeks[week].Dinner.get(0));
-		}
-		else {
-			for(int i =0; i<set.size(); i++) {
-				if(i % 3 == 0) {
+		} else {
+			int rice = -1;
+			int stew = -1;
+			int meat_drink = -1;
+			int snack = -1;
+			for (int i = 0; i < set.size(); i++) {
+				if (i > 2) {
+					if (foodList[set.get(i)].getCategory() == 1) {
+						rice = check_Rice(set,week);
+						stew = check_Stew(set,week);
+						System.out.println(rice+" , "+stew);
+						if(stew == 1) weeks[week].Lunch.add(foodList[set.get(i)].getName());
+						else if(stew == 2) weeks[week].Dinner.add(foodList[set.get(i)].getName());
+						else if(stew == 3) weeks[week].Breakfast.add(foodList[set.get(i)].getName());
+						else 
+						if(rice == 1) weeks[week].Breakfast.add(foodList[set.get(i)].getName());
+						else if(rice == 2) weeks[week].Lunch.add(foodList[set.get(i)].getName());
+						else if(rice == 3) weeks[week].Dinner.add(foodList[set.get(i)].getName());
+					}
+					else if(foodList[set.get(i)].getName().indexOf("Rice") > 0) {
+						stew = check_Stew(set,week);
+					}
+				}
+				if (i == 0) {
 					weeks[week].Breakfast.add(foodList[set.get(i)].getName());
 
-				}
-				else if(i % 3 == 1) {
+				} else if (i == 1) {
 					weeks[week].Lunch.add(foodList[set.get(i)].getName());
 
-				}
-				else if(i % 3 == 2) {
+				} else if (i == 2) {
 					weeks[week].Dinner.add(foodList[set.get(i)].getName());
 				}
+				stew = -1;
 			}
-			for(int i=0; i<weeks[week].Breakfast.size(); i++) System.out.println(weeks[week].Breakfast.get(i));
+			for (int i = 0; i < weeks[week].Breakfast.size(); i++)
+				System.out.println(weeks[week].Breakfast.get(i));
 			System.out.println();
-			for(int i=0; i<weeks[week].Lunch.size(); i++) System.out.println(weeks[week].Lunch.get(i));
+			for (int i = 0; i < weeks[week].Lunch.size(); i++)
+				System.out.println(weeks[week].Lunch.get(i));
 			System.out.println();
 
-			for(int i=0; i<weeks[week].Dinner.size(); i++) System.out.println(weeks[week].Dinner.get(i));
+			for (int i = 0; i < weeks[week].Dinner.size(); i++)
+				System.out.println(weeks[week].Dinner.get(i));
 			System.out.println();
-
 
 		}
 	}
+
 	public static void MatchRice(ArrayList<Integer> set) {
-		for(int i=0; i<set.size(); i++) {
-			if(set.size() < 3 && foodList[set.get(i)].getName().indexOf("Rice") > 0) {
-				for(int j=0; j<ctg_stew.size(); j++) {
-					if(!isSelected[ctg_stew.get(j).getIndexNum()]) {
+		for (int i = 0; i < set.size(); i++) {
+			if (set.size() < 3 && foodList[set.get(i)].getName().indexOf("Rice") > 0) {
+				for (int j = 0; j < ctg_stew.size(); j++) {
+					if (!isSelected[ctg_stew.get(j).getIndexNum()]) {
 						set.add(ctg_stew.get(j).getIndexNum());
 						return;
 					}
@@ -413,16 +440,18 @@ public class First {
 			}
 		}
 	}
+
 	public static void adjustCalories(ArrayList<Integer> set, double sum) {
 		double max = -1;
 		int idx = -1;
 		double k = 0;
 		int number = -1;
-		System.out.println("Size : "+set.size());
-		if(sum <= Promotion && sum >= Base && set.size() >= 3) return;
-		
-		if (sum <= Promotion|| set.size() < 3) {
-			if (sum <= Base||set.size() < 3) {
+//		System.out.println("Size : "+set.size());
+		if (sum <= Promotion && sum >= Base && set.size() >= 3)
+			return;
+
+		if (sum <= Promotion || set.size() < 3) {
+			if (sum <= Base || set.size() < 3) {
 				for (int i = 0; i < foodList.length; i++) {
 					if (!isSelected[i]) {
 						k = foodList[i].getCalories();
@@ -435,11 +464,13 @@ public class First {
 				set.add(idx);
 				isSelected[idx] = true;
 				if (sum + max <= Base)
-					adjustCalories(set, sum + k); // despite adding a max value, if it is less than Base calories, recursively executes.
+					adjustCalories(set, sum + k); // despite adding a max value, if it is less than Base calories,
+													// recursively executes.
 				else
 					return;
-				
-			} else return;
+
+			} else
+				return;
 		}
 
 		for (int i = 0; i < set.size(); i++) {
@@ -465,8 +496,8 @@ public class First {
 		if (idx != -1 && number != -1) {
 			set.remove(idx);
 			isSelected[number] = false;
-			System.out.println("Total Max : " + max + ", And extracted : " + foodList[number].getCalories() + "("
-					+ foodList[number].getName() + "),  its index : " + number);
+//			System.out.println("Total Max : " + max + ", And extracted : " + foodList[number].getCalories() + "("
+//					+ foodList[number].getName() + "),  its index : " + number);
 		}
 		if (max > Promotion) {
 			adjustCalories(set, max);
@@ -643,6 +674,57 @@ public class First {
 				dp[i][j] = -1;
 			}
 		}
+	}
+
+	public static int check_Rice(ArrayList<Integer> set, int week) {
+		for (int i = 0; i < weeks[week].Breakfast.size(); i++) {
+			if (weeks[week].Breakfast.get(i).indexOf("Rice") >= 0) {
+				return 1;
+			}
+		}
+		for (int i = 0; i < weeks[week].Lunch.size(); i++) {
+			if (weeks[week].Lunch.get(i).indexOf("Rice") >= 0) {
+				return 2;
+			}
+		}
+		for(int i =0; i<weeks[week].Dinner.size(); i++) {
+			if(weeks[week].Dinner.get(i).indexOf("Rice") >= 0) {
+				return 3;
+			}
+		}
+		return -1;
+	}
+
+	public static int check_Stew(ArrayList<Integer> set, int week) {
+		int sum = 0;
+		for (int i = 0; i < weeks[week].Breakfast.size(); i++) {
+			for(int j =0; j<set.size(); j++) {
+				if (weeks[week].Breakfast.get(i).equals(foodList[set.get(j)].getName())) {
+					System.out.println("1 chk");
+					sum+= 1;
+				}
+			}
+			
+		}
+		for (int i = 0; i < weeks[week].Lunch.size(); i++) {
+			for(int j =0; j<set.size(); j++) {
+				if (weeks[week].Lunch.get(i).equals(foodList[set.get(j)].getName())) {
+					System.out.println("2 chk");
+
+					sum += 2;
+				}
+			}
+		}
+		for(int i =0; i<weeks[week].Dinner.size(); i++) {
+			for(int j =0; j<set.size(); j++) {
+				if (weeks[week].Dinner.get(i).equals(foodList[set.get(j)].getName())) {
+					System.out.println("3 chk");
+
+					sum+= 3;
+				}
+			}
+		}
+		return sum -1;
 	}
 	// public static boolean isJunkFood(FoodInfo f) {
 	// if(f.getName().indexOf("pizza") >= 0 || f.getName().indexOf("Pizza") >= 0) {
