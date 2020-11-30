@@ -677,30 +677,10 @@ class DietPlanner {
 
    public static void createCombinationDaily(ArrayList<Integer> set, int week) {
       if (set.size() == 3) {
-         boolean[] keys = new boolean[] { false, false, false };
          for (int i = 0; i < set.size(); i++) {
-            if (!keys[0] && foodList[set.get(i)].getCategory() == 7 || foodList[set.get(i)].getCategory() == 1
-                  || foodList[set.get(i)].getCategory() == 4) {
-               weeks[week].Breakfast.add(foodList[set.get(i)].getIndexNum());
-               keys[0] = true;
-            } else if (!keys[1] && foodList[set.get(i)].getCategory() == 7
-                  || foodList[set.get(i)].getCategory() == 5) {
-               weeks[week].Lunch.add(foodList[set.get(i)].getIndexNum());
-               keys[1] = true;
-            } else if (!keys[2] && foodList[set.get(i)].getCategory() == 2
-                  || foodList[set.get(i)].getCategory() == 6) {
-               weeks[week].Dinner.add(foodList[set.get(i)].getIndexNum());
-               keys[2] = true;
-            } else {
-               if (keys[0] && keys[1])
-                  weeks[week].Dinner.add(foodList[set.get(i)].getIndexNum());
-               else if (keys[1] && keys[2])
-                  weeks[week].Breakfast.add(foodList[set.get(i)].getIndexNum());
-               else if (keys[0] && keys[2])
-                  weeks[week].Lunch.add(foodList[set.get(i)].getIndexNum());
-               else
-                  weeks[week].Lunch.add(foodList[set.get(i)].getIndexNum());
-            }
+        	 if(i == 0) weeks[week].Breakfast.add(foodList[set.get(i)].getIndexNum());
+        	 else if(i == 1) weeks[week].Lunch.add(foodList[set.get(i)].getIndexNum());
+        	 else if(i == 2) weeks[week].Dinner.add(foodList[set.get(i)].getIndexNum());
          }
       } else {
          boolean bre = false;
